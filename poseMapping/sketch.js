@@ -19,6 +19,7 @@ let visualsPositions = [[], [], [], []];
 let visualsRadius = 50;
 
 // Audio
+let AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 let biquadFilters = [];
 let gains = [];
