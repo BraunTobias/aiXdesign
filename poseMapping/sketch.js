@@ -16,7 +16,7 @@ let ranges = {};
 let sliderPosition = videoWidth/2;
 // Visualizations
 let visualsPositions = [[], [], [], []];
-let visualsRadius = 50;
+let visualsRadius = 100;
 
 // Audio
 let AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -163,18 +163,19 @@ function draw() {
 
   // Top Area
   topArea();
+  
+  // Visualizations
+  visualsSoundsAtHandPos();
+  visualizationBody();
 
   // Bottom Speed-Slider
   bottomSpeedSlider();
-
-  // Visualizations
-  visualizationsSounds();
-  visualizationBody();
 }
 
 // Interaction
 function topArea() {  
 
+  // Rot
   if (handRY > ranges.y1.low && handRY < ranges.y1.high && handRX > ranges.x1.low && handRX < ranges.x1.high) {
     
     // biquadFilters[1].frequency.value = map (handRY, ranges.y.low, ranges.y.high, 5, 20000);
@@ -185,14 +186,15 @@ function topArea() {
 
     var random = Math.random();
     var detune = 100;
-    var frequency = map (handRY, ranges.y1.high, ranges.y1.low, 500, 5000) + random *50 -25;
-    var Q = map (handRX, ranges.x1.low , ranges.x1.high, 0, 50, true) + random *10 -5;
+    var frequency = map (handRY, ranges.y1.high, ranges.y1.low, 500, 5000);// + random *50 -25;
+    var Q = map (handRX, ranges.x1.low , ranges.x1.high, 0, 50, true);// + random *10 -5;
+    var gain = map (handRX, ranges.x1.low , ranges.x1.high, 1, 0, true);
 
     if (context.currentTime > beginTime && context.currentTime < endTime) {
       loopTimes[1] += deltaTime;
       if(loopTimes[1] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
         loopTimes[1] = 0;
-        playSound1(detune, frequency, Q);
+        playSound1(detune, frequency, Q, gain);
       }
     }
   } else if (handLY > ranges.y1.low && handLY < ranges.y1.high && handLX > ranges.x1.low && handLX < ranges.x1.high) {
@@ -205,96 +207,101 @@ function topArea() {
 
     var random = Math.random();
     var detune = 100;
-    var frequency = map (handLY, ranges.y1.high, ranges.y1.low, 500, 5000) + random *50 -25;
-    var Q = map (handLX, ranges.x1.low , ranges.x1.high, 0, 50, true) + random *10 -5;
+    var frequency = map (handLY, ranges.y1.high, ranges.y1.low, 500, 5000);// + random *50 -25;
+    var Q = map (handLX, ranges.x1.low , ranges.x1.high, 0, 50, true);// + random *10 -5;
+    var gain = map (handLX, ranges.x1.low , ranges.x1.high, 1, 0, true);
 
     if (context.currentTime > beginTime && context.currentTime < endTime) {
       loopTimes[1] += deltaTime;
       if(loopTimes[1] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
         loopTimes[1] = 0;
-        playSound1(detune, frequency, Q);
+        playSound1(detune, frequency, Q, gain);
       }
     }
   }
-
+  // Grün
   if (handRY > ranges.y2.low && handRY < ranges.y2.high && handRX > ranges.x2.low && handRX < ranges.x2.high) {
 
     var random = Math.random();
     var detune = 100;
-    var frequency = map (handRY, ranges.y2.high, ranges.y2.low, 500, 5000) + random *50 -25;
-    var Q = map (handRX, ranges.x2.low , ranges.x2.high, 0, 50, true) + random *10 -5;
-    
+    var frequency = map (handRY, ranges.y2.high, ranges.y2.low, 500, 5000);// + random *50 -25;
+    var Q = map (handRX, ranges.x2.low , ranges.x2.high, 0, 50, true);// + random *10 -5;
+    var gain = map (handRY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
+
     if (context.currentTime > beginTime && context.currentTime < endTime) {
       loopTimes[2] += deltaTime;
-      if(loopTimes[2] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+      if(loopTimes[2] > (takt * 1 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
         loopTimes[2] = 0;
-        playSound2(detune, frequency, Q);
+        playSound2(detune, frequency, Q, gain);
       }
     }
   } else if (handLY > ranges.y2.low && handLY < ranges.y2.high && handLX > ranges.x2.low && handLX < ranges.x2.high) {
 
     var random = Math.random();
     var detune = 100;
-    var frequency = map (handLY, ranges.y2.high, ranges.y2.low, 500, 5000) + random *50 -25;
-    var Q = map (handLX, ranges.x2.low , ranges.x2.high, 0, 50, true) + random *10 -5;
+    var frequency = map (handLY, ranges.y2.high, ranges.y2.low, 500, 5000);// + random *50 -25;
+    var Q = map (handLX, ranges.x2.low , ranges.x2.high, 0, 50, true);// + random *10 -5;
+    var gain = map (handLY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
 
     if (context.currentTime > beginTime && context.currentTime < endTime) {
       loopTimes[2] += deltaTime;
-      if(loopTimes[2] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+      if(loopTimes[2] > (takt * 1 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
         loopTimes[2] = 0;
-        playSound2(detune, frequency, Q);
+        playSound2(detune, frequency, Q, gain);
       }
     }
   }
-
+  // Blau
   if (handRY > ranges.y3.low && handRY < ranges.y3.high && handRX > ranges.x3.low && handRX < ranges.x3.high) {
 
     var random = Math.random();
     var detune = 100;
-    var frequency = map (handRY, ranges.y3.high, ranges.y3.low, 500, 5000) + random *50 -25;
-    var Q = map (handRX, ranges.x3.low , ranges.x3.high, 0, 50, true) + random *10 -5;
+    var frequency = map (handRY, ranges.y3.high, ranges.y3.low, 500, 5000);// + random *50 -25;
+    var Q = map (handRX, ranges.x3.low , ranges.x3.high, 0, 50, true);// + random *10 -5;
+    var gain = map (handRX, ranges.x3.low , ranges.x3.high, 0, 3, true);
 
     if (context.currentTime > beginTime && context.currentTime < endTime) {
       loopTimes[3] += deltaTime;
-      if(loopTimes[3] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+      if(loopTimes[3] > (takt * 2 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
         loopTimes[3] = 0;
-        playSound3(detune, frequency, Q);
+        playSound3(detune, frequency, Q, gain);
       }
     }
   } else if (handLY > ranges.y3.low && handLY < ranges.y3.high && handLX > ranges.x3.low && handLX < ranges.x3.high) {
 
     var random = Math.random();
     var detune = 100;
-    var frequency = map (handLY, ranges.y3.high, ranges.y3.low, 500, 5000) + random *50 -25;
-    var Q = map (handLX, ranges.x3.low , ranges.x3.high, 0, 50, true) + random *5 -2.5;
+    var frequency = map (handLY, ranges.y3.high, ranges.y3.low, 500, 5000);// + random *50 -25;
+    var Q = map (handLX, ranges.x3.low , ranges.x3.high, 0, 50, true);// + random *5 -2.5;
+    var gain = map (handLX, ranges.x3.low , ranges.x3.high, 0, 3, true);
 
     if (context.currentTime > beginTime && context.currentTime < endTime) {
       loopTimes[3] += deltaTime;
-      if(loopTimes[3] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+      if(loopTimes[3] > (takt * 2 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
         loopTimes[3] = 0;
-        playSound3(detune, frequency, Q);
+        playSound3(detune, frequency, Q, gain);
       }
     }
   }
   
-  // Visualization
+  // Visualization Areas
   strokeWeight(3);
   var margin = 10;
   for (var i = 1; i < 4; i++) {
     switch (i) {
       case 1: 
-        fill(255,0,0,50);
-        stroke(255,0,0);
+        fill(255,0,0,0);
+        stroke(255,0,0,50);
         rect(ranges.x1.low + margin, ranges.y1.low + margin, ranges.x1.width - margin*2, ranges.y1.height - margin*2);
         break;
       case 2: 
-        fill(0,255,0,50);
-        stroke(0,255,0);
+        fill(0,255,0,0);
+        stroke(0,255,0,50);
         rect(ranges.x2.low + margin, ranges.y2.low + margin, ranges.x2.width - margin*2, ranges.y2.height - margin*2);
         break;
       case 3: 
-        fill(0,0,255,50);
-        stroke(0,0,255);
+        fill(0,0,255,0);
+        stroke(0,0,255,50);
         rect(ranges.x3.low + margin, ranges.y3.low + margin, ranges.x3.width - margin*2, ranges.y3.height - margin*2);
         break;
     }
@@ -338,7 +345,66 @@ function chooseColor(color, value) { //value: Wert zw. 0 - 50
       break;
   }
 }
-function visualizationsSounds () {
+function visualsSoundsAtHandPos () {
+  if (context.currentTime < endTime) var currentTime = context.currentTime;
+  else var currentTime = endTime;
+  // Beat
+  var sound = 0;
+  for (visual in visualsPositions[sound]) {
+    if (currentTime >= visualsPositions[sound][visual][0]) {
+      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 0.85, 255, 0)
+      fill(127,127,127,alphaVal);
+      noStroke();
+      ellipse(videoWidth/2, videoHeight, visualsRadius*4);
+    }
+  }
+  // Rot
+  sound = 1;
+  for (visual in visualsPositions[sound]) {
+    let gain = visualsPositions[sound][visual][3];
+    var frequencyPos = map (visualsPositions[sound][visual][1], 500, 5000, ranges.y1.high, ranges.y1.low);
+    var QPos = map (visualsPositions[sound][visual][2], 0, 50, ranges.x1.low, ranges.x1.high);
+    let val = visualsPositions[sound][visual][2]/100;
+    
+    if (currentTime >= visualsPositions[sound][visual][0]) {
+      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
+      fill(127+127*val*2, 200*val, 200*val, alphaVal);
+      noStroke();
+      ellipse(QPos, frequencyPos, visualsRadius*gain);
+    }
+  }
+  // Grün
+  sound = 2;
+  for (visual in visualsPositions[sound]) {
+    let gain = visualsPositions[sound][visual][3];
+    var frequencyPos = map (visualsPositions[sound][visual][1], 500, 5000, ranges.y2.high, ranges.y2.low);
+    var QPos = map (visualsPositions[sound][visual][2], 0, 50, ranges.x2.low, ranges.x2.high);
+    let val = visualsPositions[sound][visual][2]/100;
+    
+    if (currentTime >= visualsPositions[2][visual][0]) {
+      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
+      fill(200*val, 127+127*val*2, 200*val, alphaVal);
+      noStroke();
+      ellipse(QPos, frequencyPos, visualsRadius*gain*2);
+    }
+  }
+  // Blau
+  sound = 3;
+  for (visual in visualsPositions[sound]) {
+    let gain = visualsPositions[sound][visual][3];
+    var frequencyPos = map (visualsPositions[sound][visual][1], 500, 5000, ranges.y3.high, ranges.y3.low);
+    var QPos = map (visualsPositions[sound][visual][2], 0, 50, ranges.x3.low, ranges.x3.high);
+    let val = visualsPositions[sound][visual][2]/100;
+
+    if (currentTime >= visualsPositions[3][visual][0]) {
+      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
+      fill(200*val, 200*val, 127+127*val*2, alphaVal);
+      noStroke();
+      ellipse(QPos, frequencyPos, visualsRadius*gain/3);
+    }
+  }
+}
+function visualsSoundsOnBottomLines () {
   if (context.currentTime < endTime) var currentTime = context.currentTime;
   else var currentTime = endTime;
   for (sound in visualsPositions) {
@@ -386,7 +452,7 @@ function getAudioData(i) {
   biquadFilters[i] = context.createBiquadFilter();
   gains[i] = context.createGain();
 }
-function playSounds(buffer, time, i, detune, frequency, Q) {
+function playSounds(buffer, time, i, detune, frequency, Q, gain) {
   var source = context.createBufferSource();
   source.buffer = buffer;
   // if (i != 0) {
@@ -394,6 +460,7 @@ function playSounds(buffer, time, i, detune, frequency, Q) {
     gains[i].connect(biquadFilters[i]);
     biquadFilters[i].connect(context.destination);
 
+    gains[i].gain.setValueAtTime(gain, context.currentTime)
     biquadFilters[i].detune.value = detune;
     biquadFilters[i].frequency.value = frequency;
     biquadFilters[i].Q.value = Q;
@@ -404,40 +471,41 @@ function playSounds(buffer, time, i, detune, frequency, Q) {
   visualsPositions[i].push([
     time,
     frequency,
-    Q
+    Q,
+    gain
   ]);
 }
 function playBeat(detune, frequency, Q) {
   var bassdrum = audioBuffers[0];
   var time = context.currentTime;
-  playSounds(bassdrum, time + 0 * eightNoteTime, 0, detune, frequency, Q);
-  playSounds(bassdrum, time + 2 * eightNoteTime, 0, detune, frequency, Q);
-  playSounds(bassdrum, time + 4 * eightNoteTime, 0, detune, frequency, Q);
+  playSounds(bassdrum, time + 0 * eightNoteTime, 0, detune, frequency, Q, 1);
+  playSounds(bassdrum, time + 2 * eightNoteTime, 0, detune, frequency, Q, 1);
+  playSounds(bassdrum, time + 4 * eightNoteTime, 0, detune, frequency, Q, 1);
 }
-function playSound1(detune, frequency, Q) {
+function playSound1(detune, frequency, Q, gain) {
   var sound = audioBuffers[1];
   var time = context.currentTime;
-  playSounds(sound, time + 0 * eightNoteTime, 1, detune, frequency, Q);
+  playSounds(sound, time + 0 * eightNoteTime, 1, detune, frequency, Q, gain);
 }
-function playSound2(detune, frequency, Q) {
+function playSound2(detune, frequency, Q, gain) {
   var sound = audioBuffers[2];
   var time = context.currentTime;
-  playSounds(sound, time + 0 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 1 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 2 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 3 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 4 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 5 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 6 * eightNoteTime, 2, detune, frequency, Q);
-  playSounds(sound, time + 7 * eightNoteTime, 2, detune, frequency, Q);
+  playSounds(sound, time + 0 * eightNoteTime, 2, detune, frequency, Q, gain);
+  // playSounds(sound, time + 1 * eightNoteTime, 2, detune, frequency, Q);
+  // playSounds(sound, time + 2 * eightNoteTime, 2, detune, frequency, Q);
+  // playSounds(sound, time + 3 * eightNoteTime, 2, detune, frequency, Q);
+  // playSounds(sound, time + 4 * eightNoteTime, 2, detune, frequency, Q);
+  // playSounds(sound, time + 5 * eightNoteTime, 2, detune, frequency, Q);
+  // playSounds(sound, time + 6 * eightNoteTime, 2, detune, frequency, Q);
+  // playSounds(sound, time + 7 * eightNoteTime, 2, detune, frequency, Q);
 }
-function playSound3(detune, frequency, Q) {
+function playSound3(detune, frequency, Q, gain) {
   var sound = audioBuffers[3];
   var time = context.currentTime;
-  playSounds(sound, time + 0 * eightNoteTime, 3, detune, frequency, Q);
-  playSounds(sound, time + 2 * eightNoteTime, 3, detune, frequency, Q);
-  playSounds(sound, time + 4 * eightNoteTime, 3, detune, frequency, Q);
-  playSounds(sound, time + 6 * eightNoteTime, 3, detune, frequency, Q);
+  playSounds(sound, time + 0 * eightNoteTime, 3, detune, frequency, Q, gain);
+  // playSounds(sound, time + 2 * eightNoteTime, 3, detune, frequency, Q, gain);
+  // playSounds(sound, time + 4 * eightNoteTime, 3, detune, frequency, Q, gain);
+  // playSounds(sound, time + 6 * eightNoteTime, 3, detune, frequency, Q, gain);
 }
 /* function playSound(i) {
    var sound = audioBuffers[i];
