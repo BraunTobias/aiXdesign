@@ -1,3 +1,5 @@
+let isButtonPressed = false;
+
 let video;
 let posenet;
 let poses;
@@ -19,12 +21,13 @@ let visualsPositions = [[], [], [], []];
 let visualsRadius = 100;
 
 // Audio
-let AudioContext = window.AudioContext || window.webkitAudioContext;
-let context = new AudioContext();
+// let AudioContext = window.AudioContext || window.webkitAudioContext;
+let context; // = new AudioContext();
 let biquadFilters = [];
 let gains = [];
 let audioBuffers = [];
-for (let i = 0; i < 4; i++) getAudioData(i);
+// for (let i = 0; i < 4; i++) getAudioData(i);
+
 // Time
 let startTime;
 let deltaTime = 0;
@@ -36,6 +39,16 @@ let tempo = 90; // BPM (beats per minutes)
 let eightNoteTime = (60 / tempo) / 2;
 let takt = 1;
 
+function createContextAtButtonPress ()  {
+
+  context = new AudioContext();
+  biquadFilters = [];
+  gains = [];
+  audioBuffers = [];
+  for (let i = 0; i < 4; i++) getAudioData(i);
+
+  isButtonPressed = true;
+}
 
 function setup() {
   video = createCapture(VIDEO);
@@ -135,41 +148,46 @@ function setup() {
 
 function draw() {
   
-  background(35);
-  translate(videoWidth, 0)
-  scale(-1, 1)
-  // image(video, 0, 0, videoWidth, videoHeight);
-
-  if (poses) {
-    // console.log(poses);
-
-    handRX = (poses.rightWrist.x * rescaleDimensionFactor + handRX)/2;
-    handRY = (poses.rightWrist.y * rescaleDimensionFactor + handRY)/2;
-    
-    handLX = (poses.leftWrist.x * rescaleDimensionFactor + handLX)/2;
-    handLY = (poses.leftWrist.y * rescaleDimensionFactor + handLY)/2;
-  }
-
-  // Play Beat
-  deltaTime = context.currentTime - lastTime;
-  lastTime = context.currentTime
-  if (context.currentTime > beginTime && context.currentTime < endTime) {
-    loopTimes[0] += deltaTime;
-    if(loopTimes[0] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
-      loopTimes[0] = 0;
-      playBeat(0, 2500, 0);
-    }
-  }
-
-  // Top Area
-  topArea();
+  if (isButtonPressed) {
+    background(35);
+    translate(videoWidth, 0)
+    scale(-1, 1)
+    // image(video, 0, 0, videoWidth, videoHeight);
   
-  // Visualizations
-  visualsSoundsAtHandPos();
-  visualizationBody();
-
-  // Bottom Speed-Slider
-  bottomSpeedSlider();
+    if (poses) {
+      // console.log(poses);
+  
+      handRX = (poses.rightWrist.x * rescaleDimensionFactor + handRX)/2;
+      handRY = (poses.rightWrist.y * rescaleDimensionFactor + handRY)/2;
+      
+      handLX = (poses.leftWrist.x * rescaleDimensionFactor + handLX)/2;
+      handLY = (poses.leftWrist.y * rescaleDimensionFactor + handLY)/2;
+    }
+  
+    // Play Beat
+    deltaTime = context.currentTime - lastTime;
+    lastTime = context.currentTime
+    if (context.currentTime > beginTime && context.currentTime < endTime) {
+      loopTimes[0] += deltaTime;
+      if(loopTimes[0] > (takt * 8 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+        loopTimes[0] = 0;
+        playBeat(0, 2500, 0);
+      }
+    }
+  
+    // Top Area
+    topArea();
+    
+    // Visualizations
+    // visualsSoundsAtHandPos();
+    visualizationBody();
+  
+    // Bottom Speed-Slider
+    bottomSpeedSlider();
+  
+    visualsNoisy(visualsPositions, tempo);
+  }
+  
 }
 
 // Interaction
@@ -285,23 +303,23 @@ function topArea() {
   }
   
   // Visualization Areas
-  strokeWeight(3);
+  strokeWeight(5);
   var margin = 10;
   for (var i = 1; i < 4; i++) {
     switch (i) {
       case 1: 
         fill(255,0,0,0);
-        stroke(255,0,0,50);
+        stroke(255,0,0,100);
         rect(ranges.x1.low + margin, ranges.y1.low + margin, ranges.x1.width - margin*2, ranges.y1.height - margin*2);
         break;
       case 2: 
         fill(0,255,0,0);
-        stroke(0,255,0,50);
+        stroke(0,255,0,100);
         rect(ranges.x2.low + margin, ranges.y2.low + margin, ranges.x2.width - margin*2, ranges.y2.height - margin*2);
         break;
       case 3: 
         fill(0,0,255,0);
-        stroke(0,0,255,50);
+        stroke(0,0,255,100);
         rect(ranges.x3.low + margin, ranges.y3.low + margin, ranges.x3.width - margin*2, ranges.y3.height - margin*2);
         break;
     }
@@ -352,7 +370,7 @@ function visualsSoundsAtHandPos () {
   var sound = 0;
   for (visual in visualsPositions[sound]) {
     if (currentTime >= visualsPositions[sound][visual][0]) {
-      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 0.85, 255, 0)
+      let alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 0.85, 255, 0)
       fill(127,127,127,alphaVal);
       noStroke();
       ellipse(videoWidth/2, videoHeight, visualsRadius*4);
@@ -367,7 +385,7 @@ function visualsSoundsAtHandPos () {
     let val = visualsPositions[sound][visual][2]/100;
     
     if (currentTime >= visualsPositions[sound][visual][0]) {
-      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
+      let alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
       fill(127+127*val*2, 200*val, 200*val, alphaVal);
       noStroke();
       ellipse(QPos, frequencyPos, visualsRadius*gain);
@@ -382,7 +400,7 @@ function visualsSoundsAtHandPos () {
     let val = visualsPositions[sound][visual][2]/100;
     
     if (currentTime >= visualsPositions[2][visual][0]) {
-      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
+      let alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
       fill(200*val, 127+127*val*2, 200*val, alphaVal);
       noStroke();
       ellipse(QPos, frequencyPos, visualsRadius*gain*2);
@@ -397,7 +415,7 @@ function visualsSoundsAtHandPos () {
     let val = visualsPositions[sound][visual][2]/100;
 
     if (currentTime >= visualsPositions[3][visual][0]) {
-      alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
+      let alphaVal = map(currentTime - visualsPositions[sound][visual][0], 0, 10, 255, 0)
       fill(200*val, 200*val, 127+127*val*2, alphaVal);
       noStroke();
       ellipse(QPos, frequencyPos, visualsRadius*gain/3);
@@ -522,3 +540,7 @@ function getPoses (results) {
     poses = results[0].pose;
   }
 }
+
+document.getElementById("buttonPlay") .addEventListener("click", function(e) { 
+  createContextAtButtonPress()
+});
