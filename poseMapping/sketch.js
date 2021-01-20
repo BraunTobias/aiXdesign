@@ -21,6 +21,13 @@ let visualsPositions = [[], [], [], []];
 let visualsRadius = 100;
 
 // Audio
+let sphereIsPlaying = false;
+let sphere = new Audio("drumsounds/sphere.wav");
+let source;
+let distortion;
+var sphereFilter;
+var gainNode;
+
 // let AudioContext = window.AudioContext || window.webkitAudioContext;
 let context; // = new AudioContext();
 let biquadFilters = [];
@@ -42,6 +49,17 @@ let takt = 1;
 function createContextAtButtonPress ()  {
 
   context = new AudioContext();
+
+  sphere.loop = true;
+  source = context.createMediaElementSource(sphere);
+  sphereFilter = context.createBiquadFilter();
+  // gainNode = context.createGain();
+ 
+  source.connect(sphereFilter)
+  sphereFilter.connect(context.destination);
+  // gainNode.connect(context.destination);
+  
+
   biquadFilters = [];
   gains = [];
   audioBuffers = [];
@@ -240,34 +258,58 @@ function topArea() {
   // Grün
   if (handRY > ranges.y2.low && handRY < ranges.y2.high && handRX > ranges.x2.low && handRX < ranges.x2.high) {
 
-    var random = Math.random();
-    var detune = 100;
-    var frequency = map (handRY, ranges.y2.high, ranges.y2.low, 500, 5000);// + random *50 -25;
-    var Q = map (handRX, ranges.x2.low , ranges.x2.high, 0, 50, true);// + random *10 -5;
-    var gain = map (handRY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
+    // var random = Math.random();
+    // var detune = 100;
+    // var frequency = map (handRY, ranges.y2.high, ranges.y2.low, 500, 5000);// + random *50 -25;
+    // var Q = map (handRX, ranges.x2.low , ranges.x2.high, 0, 50, true);// + random *10 -5;
+    // var gain = map (handRY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
 
-    if (context.currentTime > beginTime && context.currentTime < endTime) {
-      loopTimes[2] += deltaTime;
-      if(loopTimes[2] > (takt * 1 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
-        loopTimes[2] = 0;
-        playSound2(detune, frequency, Q, gain);
-      }
-    }
+    // if (context.currentTime > beginTime && context.currentTime < endTime) {
+    //   loopTimes[2] += deltaTime;
+    //   if(loopTimes[2] > (takt * 1 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+    //     loopTimes[2] = 0;
+    //     playSound2(detune, frequency, Q, gain);
+    //   }
+    // }
+
+    sphereFilter.frequency.value = map (handRY, ranges.y2.high, ranges.y2.low, 500, 5000);
+    sphereFilter.Q.value = map (handRX, ranges.x2.low , ranges.x2.high, 0, 50, true);
+    sphereFilter.gain.value = map (handRY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
+    // gainNode.gain.value = map (handRY, ranges.y2.high, ranges.y2.low, 0, 1, true);
+    
+    if (!sphereIsPlaying) sphere.play();
+    sphereIsPlaying = true;
+    console.log('sphereIsPlaying: ', sphereIsPlaying);
+
   } else if (handLY > ranges.y2.low && handLY < ranges.y2.high && handLX > ranges.x2.low && handLX < ranges.x2.high) {
 
-    var random = Math.random();
-    var detune = 100;
-    var frequency = map (handLY, ranges.y2.high, ranges.y2.low, 500, 5000);// + random *50 -25;
-    var Q = map (handLX, ranges.x2.low , ranges.x2.high, 0, 50, true);// + random *10 -5;
-    var gain = map (handLY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
+    // var random = Math.random();
+    // var detune = 100;
+    // var frequency = map (handLY, ranges.y2.high, ranges.y2.low, 500, 5000);// + random *50 -25;
+    // var Q = map (handLX, ranges.x2.low , ranges.x2.high, 0, 50, true);// + random *10 -5;
+    // var gain = map (handLY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
 
-    if (context.currentTime > beginTime && context.currentTime < endTime) {
-      loopTimes[2] += deltaTime;
-      if(loopTimes[2] > (takt * 1 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
-        loopTimes[2] = 0;
-        playSound2(detune, frequency, Q, gain);
-      }
-    }
+    // if (context.currentTime > beginTime && context.currentTime < endTime) {
+    //   loopTimes[2] += deltaTime;
+    //   if(loopTimes[2] > (takt * 1 * eightNoteTime)) { // takt * 8 * eightNoteTime = 4.266
+    //     loopTimes[2] = 0;
+    //     playSound2(detune, frequency, Q, gain);
+    //   }
+    // }
+
+    sphereFilter.frequency.value = map (handLY, ranges.y2.high, ranges.y2.low, 500, 5000);
+    sphereFilter.Q.value = map (handLX, ranges.x2.low , ranges.x2.high, 0, 50, true);
+    sphereFilter.gain.value = map (handLY, ranges.y2.high, ranges.y2.low, 0, 0.5, true);
+    // gainNode.gain.value = map (handRY, ranges.y2.high, ranges.y2.low, 0, 1, true);
+    
+    if (!sphereIsPlaying) sphere.play();
+    sphereIsPlaying = true;
+    console.log('sphereIsPlaying: ', sphereIsPlaying);
+  }
+  else { 
+    sphereIsPlaying = false; 
+    console.log('sphereIsPlaying: ', sphereIsPlaying);
+    sphere.pause()
   }
   // Blau
   if (handRY > ranges.y3.low && handRY < ranges.y3.high && handRX > ranges.x3.low && handRX < ranges.x3.high) {
@@ -497,8 +539,8 @@ function playBeat(detune, frequency, Q) {
   var bassdrum = audioBuffers[0];
   var time = context.currentTime;
   playSounds(bassdrum, time + 0 * eightNoteTime, 0, detune, frequency, Q, 1);
-  playSounds(bassdrum, time + 2 * eightNoteTime, 0, detune, frequency, Q, 1);
-  playSounds(bassdrum, time + 4 * eightNoteTime, 0, detune, frequency, Q, 1);
+  // playSounds(bassdrum, time + 2 * eightNoteTime, 0, detune, frequency, Q, 1);
+  // playSounds(bassdrum, time + 4 * eightNoteTime, 0, detune, frequency, Q, 1);
 }
 function playSound1(detune, frequency, Q, gain) {
   var sound = audioBuffers[1];
