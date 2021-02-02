@@ -54,7 +54,7 @@ function createAudioContext(theme) {
 
   context = new AudioContext();
 
-  sphere = new Audio("/" + theme + "/sphere.wav");
+  sphere = new Audio(theme + "/sphere.wav");
   sphere.loop = true;
   source = context.createMediaElementSource(sphere);
   sphereFilter = context.createBiquadFilter();
