@@ -138,7 +138,6 @@ function draw() {
   background(0);
   translate(videoWidth, 0)
   
-
   // Wenn Spiel noch nicht läuft, Buttons anzeigen
   if (!isButtonPressed) {
     scale(1, 1)
@@ -167,7 +166,6 @@ function draw() {
     let currentHandRX = 0, currentHandRY = 0;
     let currentHandLX = 0, currentHandLY = 0;
     if (poses) {
-      console.log('poses')
       currentHandRX = (poses.rightWrist.x * rescaleDimensionFactor + handRX + lastRX) / 3;
       currentHandRY = (poses.rightWrist.y * rescaleDimensionFactor + handRY + lastRY) / 3;
       currentHandLX = (poses.leftWrist.x * rescaleDimensionFactor + handLX + lastLX) / 3;
@@ -206,8 +204,6 @@ function draw() {
 
     visualsNoisy(visualsPositions, tempo);
   }
-
-
 }
 
 function mousePressed() {
@@ -552,7 +548,7 @@ function visualsAreas() {
 function getAudioData(i, theme) {
 
   var request = new XMLHttpRequest();
-  request.open('GET', "/" + theme + "/sound" + (i + 1) + ".wav", true);
+  request.open('GET', "../" + theme + "/sound" + (i + 1) + ".wav", true);
   request.responseType = 'arraybuffer';
   request.onload = function () {
     var undecodedAudio = request.response;
