@@ -10,7 +10,12 @@ let lastLX = 0, lastLY = 0;
 let beginTime = 2; // sec
 let endTime = 120; // sec
 
-// Visual
+// Menü
+// let font;
+let headlineTextSize = 60;
+let buttonTextSize = 40;
+
+// Visualisierung
 let rescaleDimensionFactor = 1;
 let history = 2;
 let videoWidth = 640;
@@ -62,9 +67,18 @@ function createAudioContext(theme) {
   for (let i = 0; i < 3; i++) getAudioData(i, theme);
 
   isButtonPressed = true;
+
+  video = createCapture(VIDEO);
+  video.hide();
+
+  posenet = ml5.poseNet(video, modelLoaded);
+  posenet.on('pose', getPoses);
 }
 
 function preload() {
+  // Font
+  // font = loadFont('/assets/')
+
   // Handvisuals
   imgR = loadImage('/assets/R2.png');
   imgL = loadImage('/assets/L2.png');
@@ -72,12 +86,10 @@ function preload() {
 
 function setup() {
   background(0);
-  video = createCapture(VIDEO);
   rescaleDimensionFactor = windowWidth / videoWidth;
   videoWidth = window.innerWidth;
-  videoHeight = window.innerHeight - 20; //videoHeight * rescaleDimensionFactor;
+  videoHeight = window.innerHeight; //videoHeight * rescaleDimensionFactor;
   createCanvas(videoWidth, videoHeight);
-  video.hide();
 
   // areas on window edges
   ranges = {
@@ -120,22 +132,42 @@ function setup() {
       height: videoHeight / 2,
     }
   };
-  posenet = ml5.poseNet(video, modelLoaded);
-  posenet.on('pose', getPoses);
-
-  // startTime = context.currentTime;
 }
 
 function draw() {
+  background(0);
+  translate(videoWidth, 0)
+  
 
-  if (isButtonPressed) {
-    background(0);
-    translate(videoWidth, 0)
+  // Wenn Spiel noch nicht läuft, Buttons anzeigen
+  if (!isButtonPressed) {
+    scale(1, 1)
+
+    let string = 'WÄHLE EINE SOUNDWELT'
+    textSize(headlineTextSize);
+    textAlign(CENTER);
+    fill(255);
+    text(string, -videoWidth / 2, videoHeight / 7 * 2);
+
+    
+    textSize(buttonTextSize);
+    string = 'SPHÄRISCH'
+    text(string, - videoWidth / 9 * 2, videoHeight / 7 * 4);
+    string = 'EXPERIMENTELL'
+    text(string, - videoWidth / 2, videoHeight / 7 * 4);
+    string = 'MEDITATIV'
+    text(string, - videoWidth / 9 * 7, videoHeight / 7 * 4);
+
+  }
+  // Wenn Buttons gedrückt worden sind, Spiel starten
+  else {
     scale(-1, 1)
+
     // image(video, 0, 0, videoWidth, videoHeight);
     let currentHandRX = 0, currentHandRY = 0;
     let currentHandLX = 0, currentHandLY = 0;
     if (poses) {
+      console.log('poses')
       currentHandRX = (poses.rightWrist.x * rescaleDimensionFactor + handRX + lastRX) / 3;
       currentHandRY = (poses.rightWrist.y * rescaleDimensionFactor + handRY + lastRY) / 3;
       currentHandLX = (poses.leftWrist.x * rescaleDimensionFactor + handLX + lastLX) / 3;
@@ -173,6 +205,20 @@ function draw() {
     bottomSpeedSlider();
 
     visualsNoisy(visualsPositions, tempo);
+  }
+
+
+}
+
+function mousePressed() {
+  if (mouseY > videoHeight / 7 * 4 - buttonTextSize / 2 && mouseY < videoHeight / 7 * 4 + buttonTextSize / 2) {
+    if (mouseX > videoWidth / 9 * 2 -40 && mouseX < videoWidth / 9 * 2 +40){
+      createAudioContext("theme1");
+    } else if (mouseX > videoWidth / 2 -40 && mouseX < videoWidth / 2 +40){
+      createAudioContext("theme2");
+    } else if (mouseX > videoWidth / 9 * 2 -40 && mouseX < videoWidth / 9 * 4 +40){
+      createAudioContext("theme3");
+    }
   }
 }
 
@@ -578,6 +624,6 @@ function getPoses(results) {
 }
 
 // document.getElementById("buttonPlay").addEventListener("click", function (e) { createAudioContext() } );
-document.getElementById("Theme1").addEventListener("click", function (e) { createAudioContext("theme1") } );
-document.getElementById("Theme2").addEventListener("click", function (e) { createAudioContext("theme2") } );
-document.getElementById("Theme3").addEventListener("click", function (e) { createAudioContext("theme3") } );
+// document.getElementById("Theme1").addEventListener("click", function (e) { createAudioContext("theme1") } );
+// document.getElementById("Theme2").addEventListener("click", function (e) { createAudioContext("theme2") } );
+// document.getElementById("Theme3").addEventListener("click", function (e) { createAudioContext("theme3") } );
