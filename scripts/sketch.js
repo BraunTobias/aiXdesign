@@ -54,7 +54,7 @@ function createAudioContext(theme) {
 
   context = new AudioContext();
 
-  sphere = new Audio(theme + "/sphere.wav");
+  sphere = new Audio("../" + theme + "/sphere.wav");
   sphere.loop = true;
   source = context.createMediaElementSource(sphere);
   sphereFilter = context.createBiquadFilter();
@@ -548,7 +548,7 @@ function visualsAreas() {
 function getAudioData(i, theme) {
 
   var request = new XMLHttpRequest();
-  request.open('GET', theme + "/sound" + (i + 1) + ".wav", true);
+  request.open('GET', "../" + theme + "/sound" + (i + 1) + ".wav", true);
   request.responseType = 'arraybuffer';
   request.onload = function () {
     var undecodedAudio = request.response;
