@@ -80,8 +80,8 @@ function preload() {
   // font = loadFont('/assets/')
 
   // Handvisuals
-  imgR = loadImage('/assets/R2.png');
-  imgL = loadImage('/assets/L2.png');
+  imgR = loadImage('assets/R2.png');
+  imgL = loadImage('assets/L2.png');
 }
 
 function setup() {
