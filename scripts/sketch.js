@@ -54,7 +54,7 @@ function createAudioContext(theme) {
 
   context = new AudioContext();
 
-  sphere = new Audio("../" + theme + "/sphere.wav");
+  sphere = new Audio("/aiXdesign/" + theme + "/sphere.wav");
   sphere.loop = true;
   source = context.createMediaElementSource(sphere);
   sphereFilter = context.createBiquadFilter();
@@ -207,7 +207,9 @@ function draw() {
 }
 
 function mousePressed() {
+
   if (mouseY > videoHeight / 7 * 4 - buttonTextSize / 2 && mouseY < videoHeight / 7 * 4 + buttonTextSize / 2) {
+    
     if (mouseX > videoWidth / 9 * 2 -40 && mouseX < videoWidth / 9 * 2 +40){
       createAudioContext("theme1");
     } else if (mouseX > videoWidth / 2 -40 && mouseX < videoWidth / 2 +40){
@@ -548,7 +550,7 @@ function visualsAreas() {
 function getAudioData(i, theme) {
 
   var request = new XMLHttpRequest();
-  request.open('GET', "../" + theme + "/sound" + (i + 1) + ".wav", true);
+  request.open('GET', "/aiXdesign/" + theme + "/sound" + (i + 1) + ".wav", true);
   request.responseType = 'arraybuffer';
   request.onload = function () {
     var undecodedAudio = request.response;
